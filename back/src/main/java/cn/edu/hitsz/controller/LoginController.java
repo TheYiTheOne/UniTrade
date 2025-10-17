@@ -1,43 +1,34 @@
 package cn.edu.hitsz.controller;
 
-import cn.edu.hitsz.pojo.Emp;
-import cn.edu.hitsz.pojo.Result;
-import cn.edu.hitsz.service.EmpService;
-import cn.edu.hitsz.utils.JwtUtils;
-import lombok.extern.slf4j.Slf4j;
+
+import cn.edu.hitsz.common.LoginDTO;
+import cn.edu.hitsz.common.Result;
+import cn.edu.hitsz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.annotation.Resource;
 
-@Slf4j
 @RestController
+@RequestMapping("/login")
 public class LoginController {
 
-    @Autowired
-    private EmpService empService;
+    @Resource
+    private UserService userService;
 
-    @PostMapping("/login")
-    public Result login(@RequestBody Emp emp){
-        log.info("员工登录: {}", emp);
-        Emp e = empService.login(emp);
-
-        //登录成功,生成令牌,下发令牌
-        if (e != null){
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("id", e.getId());
-            claims.put("name", e.getName());
-            claims.put("username", e.getUsername());
-
-            String jwt = JwtUtils.generateJwt(claims); //jwt包含了当前登录的员工信息
-            return Result.success(jwt);
+    /**
+     * 用户登录
+     * POST /login
+     */
+    @PostMapping
+    public Result<String> login(@RequestBody LoginDTO loginDTO) {
+        try {
+            String token = userService.login(loginDTO.getAccount(), loginDTO.getPassword());
+            return Result.success(token); // code=1, msg="success"
+        } catch (IllegalArgumentException e) {
+            return Result.fail(0, e.getMessage());
+        } catch (Exception e) {
+            return Result.fail(0, "系统异常");
         }
-
-        //登录失败, 返回错误信息
-        return Result.error("用户名或密码错误");
     }
-
 }
