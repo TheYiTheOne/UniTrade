@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.hitsz.unitrade.mapper.OrdersMapper">
+<mapper namespace="cn.edu.hitsz.mapper.OrdersMapper">
 
-    <resultMap id="BaseResultMap" type="cn.edu.hitsz.unitrade.model.entity.Orders">
+    <resultMap id="BaseResultMap" type="cn.edu.hitsz.pojo.Order">
             <id property="id" column="id" />
             <result property="customerId" column="customer_id" />
             <result property="productId" column="product_id" />
@@ -21,4 +21,27 @@
         id,customer_id,product_id,warehouse_id,quantity,type,
         total_price,status,create_time,update_time
     </sql>
+
+
+    <select id="selectPageVo" resultType="cn.edu.hitsz.pojo.Order">
+        SELECT
+        o.id,
+        o.customer_id AS customerId,
+        o.product_id AS productId,
+        o.warehouse_id AS warehouseId,
+        o.quantity,
+        o.type,
+        o.total_price AS totalPrice,
+        o.status,
+        o.create_time AS createTime,
+        o.update_time AS updateTime
+        FROM orders o
+        <!-- 如果需要根据 product 表的 name 查询，需 LEFT JOIN -->
+        LEFT JOIN products p ON o.product_id = p.id
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            AND o.product_name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        ORDER BY o.create_time DESC
+    </select>
 </mapper>

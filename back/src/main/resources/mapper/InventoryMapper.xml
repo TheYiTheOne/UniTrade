@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.hitsz.unitrade.mapper.InventoryMapper">
+<mapper namespace="cn.edu.hitsz.mapper.InventoryMapper">
 
-    <resultMap id="BaseResultMap" type="cn.edu.hitsz.unitrade.model.entity.Inventory">
+    <resultMap id="BaseResultMap" type="cn.edu.hitsz.pojo.Inventory">
             <id property="id" column="id" />
             <result property="productId" column="product_id" />
             <result property="warehouseId" column="warehouse_id" />

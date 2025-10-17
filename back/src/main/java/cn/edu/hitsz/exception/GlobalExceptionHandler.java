@@ -1,6 +1,8 @@
 package cn.edu.hitsz.exception;
 
-import cn.edu.hitsz.pojo.Result;
+import cn.edu.hitsz.common.Result;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -10,10 +12,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)//捕获所有异常
-    public Result ex(Exception ex){
-        ex.printStackTrace();
-        return Result.error("对不起,操作失败,请联系管理员");
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Result<Void>> handleException(Exception e) {
+        Result<Void> result = Result.fail(500, "系统内部错误：" + e.getMessage());
+        return ResponseEntity.status(500).body(result);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Result<Void>> handleIllegalArgument(IllegalArgumentException e) {
+        Result<Void> result = Result.fail(400, e.getMessage());
+        return ResponseEntity.status(400).body(result);
+    }
 }
