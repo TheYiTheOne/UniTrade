@@ -2,11 +2,17 @@ server:
   port: 8080
 spring:
   #数据库连接信息
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://47.115.163.216:3306/unitrade
+#    username: root
+#    password: new_password
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://47.115.163.216:3306/unitrade
+    url: jdbc:mysql://localhost:3306/unitrade
     username: root
-    password: new_password
+    password: 123456
 
 #Mybatis配置
 mybatis:

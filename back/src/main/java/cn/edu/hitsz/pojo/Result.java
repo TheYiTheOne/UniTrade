@@ -6,22 +6,60 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class Result {
-    private Integer code;//响应码，1 代表成功; 0 代表失败
-    private String msg;  //响应信息 描述字符串
-    private Object data; //返回的数据
+public class Result<T> {
 
-    //增删改 成功响应
-    public static Result success(){
-        return new Result(1,"success",null);
+    // 状态码常量
+    public static final int CODE_SUCCESS = 200;
+    public static final int CODE_FAIL = 500;
+
+    private int code;
+    private String message;
+    private T data;
+
+    public Result(int code, String message, T data) {
+        this.data = data;
+        this.message = message;
+        this.code = code;
     }
-    //查询 成功响应
-    public static Result success(Object data){
-        return new Result(1,"success",data);
+
+    public int getCode() {
+        return code;
     }
-    //失败响应
-    public static Result error(String msg){
-        return new Result(0,msg,null);
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public static <T> Result<T> success() {
+        return new Result<>(CODE_SUCCESS, "success", null);
+    }
+
+    public static <T> Result<T> success(T data) {
+        return new Result<>(CODE_SUCCESS, "success", data);
+    }
+
+    public static <T> Result<T> success(T data, String message) {
+        return new Result<>(CODE_SUCCESS, message, data);
+    }
+
+    // ========== 失败响应 ==========
+    public static <T> Result<T> fail(String message) {
+        return new Result<>(CODE_FAIL, message, null);
     }
 }

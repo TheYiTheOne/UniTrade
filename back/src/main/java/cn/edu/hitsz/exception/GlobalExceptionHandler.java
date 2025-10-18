@@ -10,10 +10,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)//捕获所有异常
-    public Result ex(Exception ex){
-        ex.printStackTrace();
-        return Result.error("对不起,操作失败,请联系管理员");
+    /**
+     * 处理参数校验异常（可选）
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Result<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return Result.fail("参数错误：" + e.getMessage());
+    }
+
+    /**
+     * 处理所有未被捕获的异常（兜底）
+     */
+    @ExceptionHandler(Exception.class)
+    public Result<String> handleException(Exception e) {
+        // 生产环境建议只返回通用提示，不暴露细节
+        return Result.fail("服务器内部错误:"  + e.getMessage());
     }
 
 }
