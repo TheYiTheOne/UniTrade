@@ -1,8 +1,9 @@
 package cn.edu.hitsz.controller;
 
-import cn.edu.hitsz.anno.Log;
+import cn.edu.hitsz.common.Result;
 import cn.edu.hitsz.pojo.*;
 import cn.edu.hitsz.service.WarehouseService;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,7 +40,6 @@ public class WarehouseController {
      * 删除仓库
      * @return
      */
-    @Log
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) throws Exception {
         //调用service删除仓库
@@ -52,7 +52,6 @@ public class WarehouseController {
      * 新增仓库
      * @return
      */
-    @Log
     @PostMapping
     public Result add(@RequestBody Warehouse warehouse){
         //调用service新增仓库
@@ -66,7 +65,6 @@ public class WarehouseController {
         return Result.success(warehouse);
     }
 
-    @Log
     @PutMapping
     public Result update(@RequestBody Warehouse warehouse){
         warehouseService.update(warehouse);

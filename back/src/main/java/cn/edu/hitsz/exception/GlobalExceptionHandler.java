@@ -1,6 +1,6 @@
 package cn.edu.hitsz.exception;
 
-import cn.edu.hitsz.pojo.Result;
+import cn.edu.hitsz.common.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

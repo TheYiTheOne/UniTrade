@@ -1,11 +1,5 @@
-package cn.edu.hitsz.pojo;
+package cn.edu.hitsz.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
 public class Result<T> {
 
     // 状态码常量
