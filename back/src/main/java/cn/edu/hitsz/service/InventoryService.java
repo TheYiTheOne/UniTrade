@@ -1,13 +1,24 @@
 package cn.edu.hitsz.service;
 
-import cn.edu.hitsz.pojo.Inventory;
-import com.baomidou.mybatisplus.extension.service.IService;
+import cn.edu.hitsz.pojo.InventoryAddRequest;
+import cn.edu.hitsz.pojo.InventoryTransferRequest;
+import cn.edu.hitsz.pojo.PageBean;
 
-/**
-* @author Administrator
-* @description 针对表【inventory(库存表，记录每个仓库中每种货品的库存情况)】的数据库操作Service
-* @createDate 2025-10-18 00:20:49
-*/
-public interface InventoryService extends IService<Inventory> {
+public interface InventoryService {
+
+    /**
+     * 分页查询
+     */
+    PageBean page(Integer page, Integer pageSize, String name);
+
+    /**
+     * 进货入库
+     */
+    void addInventory(InventoryAddRequest request);
+
+    /**
+     * 库存转移
+     */
+    void transferInventory(InventoryTransferRequest request);
 
 }
