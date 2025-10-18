@@ -7,8 +7,8 @@ import cn.edu.hitsz.pojo.Product;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import cn.edu.hitsz.service.OrdersService;
-import cn.edu.hitsz.mapper.OrdersMapper;
+import cn.edu.hitsz.service.OrderService;
+import cn.edu.hitsz.mapper.OrderMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +25,11 @@ import java.util.Date;
 * @createDate 2025-10-17 22:59:11
 */
 @Service
-public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Order>
-    implements OrdersService{
+public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
+    implements OrderService {
 
     @Resource
-    private OrdersMapper ordersMapper;
+    private OrderMapper orderMapper;
     @Resource
     private ProductMapper productMapper;
 

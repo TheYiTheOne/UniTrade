@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
 * @createDate 2025-10-17 22:59:11
 * @Entity cn.edu.hitsz.pojo.Orders
 */
-public interface OrdersMapper extends BaseMapper<Order> {
+public interface OrderMapper extends BaseMapper<Order> {
 
     /**
      * 分页查询销售单列表（支持货品名模糊查询）

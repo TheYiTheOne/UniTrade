@@ -13,8 +13,8 @@ public interface UserService extends IService<User> {
      * 用户登录
      * @param account 账号
      * @param password 明文密码
-     * @return JWT 令牌
+     * @return roleId
      */
-    String login(String account, String password);
+    Integer login(String account, String password);
 
 }

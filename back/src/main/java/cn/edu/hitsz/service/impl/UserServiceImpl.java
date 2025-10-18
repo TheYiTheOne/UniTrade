@@ -1,6 +1,5 @@
 package cn.edu.hitsz.service.impl;
 
-import cn.edu.hitsz.utils.JwtUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.edu.hitsz.pojo.User;
 import cn.edu.hitsz.service.UserService;
@@ -24,21 +23,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private UserMapper userMapper;
 
     @Override
-    public String login(String account, String password) {
+    public Integer login(String account, String password) {
         // 1. 查询用户
         User user = userMapper.selectByAccount(account);
         if (user == null) {
             throw new IllegalArgumentException("账号或密码错误");
         }
 
-        // 2. 密码校验（MD5 示例）
-        String encodedPassword = DigestUtils.md5DigestAsHex(password.getBytes());
-        if (!user.getPassword().equals(encodedPassword)) {
+        // 2. 密码校验
+        if (!user.getPassword().equals(password)) {
             throw new IllegalArgumentException("账号或密码错误");
         }
 
-        // 3. 生成 JWT（包含 id, account, name, roleId）
-        return JwtUtils.generateToken(user.getId(), user.getAccount(), user.getName(), user.getRoleId());
+        // 3. 返回 roleId
+        return user.getRoleId();
     }
 }
 

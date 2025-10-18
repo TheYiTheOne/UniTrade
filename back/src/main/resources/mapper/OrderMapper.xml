@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.hitsz.mapper.OrdersMapper">
+<mapper namespace="cn.edu.hitsz.mapper.OrderMapper">
 
     <resultMap id="BaseResultMap" type="cn.edu.hitsz.pojo.Order">
             <id property="id" column="id" />
@@ -36,7 +36,6 @@
         o.create_time AS createTime,
         o.update_time AS updateTime
         FROM orders o
-        <!-- 如果需要根据 product 表的 name 查询，需 LEFT JOIN -->
         LEFT JOIN products p ON o.product_id = p.id
         WHERE 1=1
         <if test="name != null and name != ''">

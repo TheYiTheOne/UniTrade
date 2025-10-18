@@ -1,10 +1,11 @@
 package cn.edu.hitsz.controller;
 
 
+import cn.dev33.satoken.stp.SaTokenInfo;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.edu.hitsz.common.LoginDTO;
 import cn.edu.hitsz.common.Result;
 import cn.edu.hitsz.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,12 +24,16 @@ public class LoginController {
     @PostMapping
     public Result<String> login(@RequestBody LoginDTO loginDTO) {
         try {
-            String token = userService.login(loginDTO.getAccount(), loginDTO.getPassword());
-            return Result.success(token); // code=1, msg="success"
-        } catch (IllegalArgumentException e) {
-            return Result.fail(0, e.getMessage());
+            Integer roleId = userService.login(loginDTO.getAccount(), loginDTO.getPassword());
+
+            StpUtil.login(loginDTO.getAccount());
+            StpUtil.getSession().set("roleId", roleId);
+
+            SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+
+            return Result.success(tokenInfo.getTokenValue());
         } catch (Exception e) {
-            return Result.fail(0, "系统异常");
+            return Result.fail("登录失败：" + e.getMessage());
         }
     }
 }

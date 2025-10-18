@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @description 针对表【orders(销售单表，记录销售订单详情)】的数据库操作Service
 * @createDate 2025-10-17 22:59:11
 */
-public interface OrdersService extends IService<Order> {
+public interface OrderService extends IService<Order> {
 
     /**
      * 分页查询销售单列表（支持货品名模糊查询）
