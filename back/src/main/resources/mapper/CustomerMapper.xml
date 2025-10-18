@@ -14,8 +14,18 @@
             <result property="updateTime" column="update_time" />
     </resultMap>
 
-    <sql id="Base_Column_List">
-        id,name,type,phone,address,create_time,
-        update_time
-    </sql>
+    <sql id="Base_Column_List">id,name,type,phone,address,create_time,update_time</sql>
+
+    <!-- 根据客户姓名模糊查询客户列表 -->
+    <select id="list" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM customers
+        <where>
+            <if test="name != null and name != ''">
+                name LIKE CONCAT('%', #{name}, '%')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
 </mapper>
