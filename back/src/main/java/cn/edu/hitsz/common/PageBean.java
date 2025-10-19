@@ -1,5 +1,7 @@
 package cn.edu.hitsz.common;
 
+import cn.edu.hitsz.pojo.Inventory;
+
 import java.util.List;
 
 /**
@@ -15,6 +17,9 @@ public class PageBean<T> {
         return rows;
     }
 
+    public PageBean() {
+    }
+
     public void setRows(List<T> rows) {
         this.rows = rows;
     }
@@ -25,5 +30,10 @@ public class PageBean<T> {
 
     public void setTotal(Long total) {
         this.total = total;
+    }
+
+    public PageBean(Long total, List<T> rows) {
+        this.total = total;
+        this.rows = rows;
     }
 }

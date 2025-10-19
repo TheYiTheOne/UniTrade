@@ -1,5 +1,6 @@
 package cn.edu.hitsz.controller;
 
+import cn.edu.hitsz.common.PageBean;
 import cn.edu.hitsz.common.Result;
 import cn.edu.hitsz.pojo.*;
 import cn.edu.hitsz.service.WarehouseService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.time.LocalDate;
 
 /**
@@ -19,7 +21,7 @@ import java.time.LocalDate;
 @RestController
 public class WarehouseController {
 
-    @Autowired
+    @Resource
     private WarehouseService warehouseService;
 
     /**
@@ -27,9 +29,9 @@ public class WarehouseController {
      * @return
      */
     @GetMapping
-    public Result page(@RequestParam(defaultValue = "1") Integer page,
-                       @RequestParam(defaultValue = "10") Integer pageSize,
-                       String name){
+    public Result<PageBean> page(@RequestParam(defaultValue = "1") Integer page,
+                                 @RequestParam(defaultValue = "10") Integer pageSize,
+                                 String name){
         //调用service分页查询
         PageBean pageBean = warehouseService.page(page,pageSize,name);
         return Result.success(pageBean);

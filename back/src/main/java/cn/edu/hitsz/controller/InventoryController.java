@@ -1,5 +1,6 @@
 package cn.edu.hitsz.controller;
 
+import cn.edu.hitsz.common.PageBean;
 import cn.edu.hitsz.common.Result;
 import cn.edu.hitsz.pojo.*;
 import cn.edu.hitsz.service.InventoryService;

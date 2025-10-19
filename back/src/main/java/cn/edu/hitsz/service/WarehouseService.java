@@ -1,7 +1,7 @@
 package cn.edu.hitsz.service;
 
+import cn.edu.hitsz.common.PageBean;
 import cn.edu.hitsz.pojo.Warehouse;
-import cn.edu.hitsz.pojo.PageBean;
 
 public interface WarehouseService {
     /**
@@ -10,7 +10,7 @@ public interface WarehouseService {
      * @param pageSize
      * @return
      */
-    PageBean page(Integer page, Integer pageSize,String name);
+    PageBean page(Integer page, Integer pageSize, String name);
 
     /**
      * 根据ID删除仓库

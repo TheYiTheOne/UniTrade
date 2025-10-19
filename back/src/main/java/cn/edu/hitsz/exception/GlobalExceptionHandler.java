@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotLoginException.class)
     public Result<String> handleNotLoginException(NotLoginException e) {
-        return Result.fail("NOT_LOGIN");
+        return Result.deny("NOT_LOGIN");
     }
 
     /**
@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotRoleException.class)
     public Result<String> handleNotRoleException(NotRoleException e) {
-        return Result.fail("缺少角色：" + e.getRole());
+        return Result.deny("缺少角色：" + e.getRole());
     }
 
     /**
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotPermissionException.class)
     public Result<String> handleNotPermissionException(NotPermissionException e) {
-        return Result.fail("缺少权限：" + e.getCode());
+        return Result.deny("缺少权限：" + e.getCode());
     }
 
     /**
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DisableServiceException.class)
     public Result<String> handleDisableServiceException(DisableServiceException e) {
-        return Result.fail("账号已被封禁：" + e.getDisableTime() + " 秒内无法操作");
+        return Result.deny("账号已被封禁：" + e.getDisableTime() + " 秒内无法操作");
     }
 
     /**

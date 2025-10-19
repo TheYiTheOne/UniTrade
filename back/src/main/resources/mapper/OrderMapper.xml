@@ -25,22 +25,27 @@
 
     <select id="selectPageVo" resultType="cn.edu.hitsz.pojo.Order">
         SELECT
-        o.id,
-        o.customer_id AS customerId,
-        o.product_id AS productId,
-        o.warehouse_id AS warehouseId,
-        o.quantity,
-        o.type,
-        o.total_price AS totalPrice,
-        o.status,
-        o.create_time AS createTime,
-        o.update_time AS updateTime
+            o.id,
+            o.customer_id AS customerId,
+            o.product_id AS productId,
+            o.warehouse_id AS warehouseId,
+            o.quantity,
+            o.type,
+            o.total_price AS totalPrice,
+            o.status,
+            o.create_time AS createTime,
+            o.update_time AS updateTime
         FROM orders o
-        LEFT JOIN products p ON o.product_id = p.id
-        WHERE 1=1
-        <if test="name != null and name != ''">
-            AND o.product_name LIKE CONCAT('%', #{name}, '%')
-        </if>
+        INNER JOIN (
+            SELECT o2.id
+            FROM orders o2
+            INNER JOIN products p ON o2.product_id = p.id
+            WHERE 1=1
+            <if test="name != null and name != ''">
+                AND MATCH(p.name) AGAINST(#{name} IN BOOLEAN MODE)
+            </if>
+            ORDER BY o2.create_time DESC
+        ) t ON o.id = t.id
         ORDER BY o.create_time DESC
     </select>
 </mapper>

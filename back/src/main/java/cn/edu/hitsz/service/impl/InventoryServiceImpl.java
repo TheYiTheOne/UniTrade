@@ -1,9 +1,9 @@
 package cn.edu.hitsz.service.impl;
 
+import cn.edu.hitsz.common.PageBean;
 import cn.edu.hitsz.mapper.InventoryMapper;
 import cn.edu.hitsz.pojo.InventoryAddRequest;
 import cn.edu.hitsz.pojo.InventoryTransferRequest;
-import cn.edu.hitsz.pojo.PageBean;
 import cn.edu.hitsz.pojo.Inventory;
 import cn.edu.hitsz.service.InventoryService;
 import com.github.pagehelper.Page;

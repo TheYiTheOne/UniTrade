@@ -2,9 +2,11 @@ package cn.edu.hitsz.config;
 
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.edu.hitsz.common.Permission;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,7 +22,23 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        return null;
+        // 1. 从当前会话的 Session 中获取 permissionBitmask
+        Integer bitmaskObj = (Integer) StpUtil.getSession().get("permissionBitmask");
+
+        if (bitmaskObj == null || bitmaskObj == 0) {
+            return Collections.emptyList();
+        }
+
+        int bitmask = bitmaskObj;
+
+        // 2. 根据掩码解析出权限码列表
+        List<String> permissions = new ArrayList<>();
+        for (Permission p : Permission.values()) {
+            if ((bitmask & p.getBitMask()) != 0) {
+                permissions.add(p.getCode());
+            }
+        }
+        return permissions;
     }
 
     /**
@@ -29,21 +47,7 @@ public class StpInterfaceImpl implements StpInterface {
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
 
-        Integer roleId = (Integer) StpUtil.getSession().get("roleId");
-        List<String> list = new ArrayList<>();
-
-        if(roleId == 0){
-            list.add("admin");
-            list.add("manager");
-            list.add("clerk");
-        } else if(roleId == 1){
-            list.add("manager");
-            list.add("clerk");
-        } else if(roleId == 2){
-            list.add("clerk");
-        }
-
-        return list;
+        return Collections.emptyList();
     }
 
 }

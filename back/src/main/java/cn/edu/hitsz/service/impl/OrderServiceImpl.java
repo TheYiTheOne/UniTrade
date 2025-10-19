@@ -4,6 +4,7 @@ import cn.edu.hitsz.mapper.ProductMapper;
 import cn.edu.hitsz.pojo.Order;
 
 import cn.edu.hitsz.pojo.Product;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -29,8 +30,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     implements OrderService {
 
     @Resource
-    private OrderMapper orderMapper;
-    @Resource
     private ProductMapper productMapper;
 
     // 状态常量
@@ -42,6 +41,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     // 类型常量
     private static final int TYPE_WHOLESALE = 0;      // 批发
     private static final int TYPE_RETAIL = 1;         // 零售
+
 
     @Override
     public IPage<Order> listOrders(String name, Integer page, Integer pageSize) {

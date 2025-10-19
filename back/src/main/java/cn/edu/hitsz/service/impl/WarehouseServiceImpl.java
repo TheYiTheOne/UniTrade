@@ -1,21 +1,21 @@
 package cn.edu.hitsz.service.impl;
 
+import cn.edu.hitsz.common.PageBean;
 import cn.edu.hitsz.mapper.WarehouseMapper;
 import cn.edu.hitsz.pojo.Warehouse;
-import cn.edu.hitsz.pojo.PageBean;
 import cn.edu.hitsz.service.WarehouseService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
 
-    @Autowired
+    @Resource
     private WarehouseMapper warehouseMapper;
     
     @Override

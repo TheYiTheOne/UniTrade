@@ -5,6 +5,7 @@ public class Result<T> {
     // 状态码常量
     public static final int CODE_SUCCESS = 200;
     public static final int CODE_FAIL = 500;
+    public static final int PERMISSION_DENIED = 501;
 
     private int code;
     private String message;
@@ -55,5 +56,9 @@ public class Result<T> {
     // ========== 失败响应 ==========
     public static <T> Result<T> fail(String message) {
         return new Result<>(CODE_FAIL, message, null);
+    }
+
+    public static <T> Result<T> deny(String message) {
+        return new Result<>(PERMISSION_DENIED, message, null);
     }
 }

@@ -1,8 +1,8 @@
 package cn.edu.hitsz.service;
 
+import cn.edu.hitsz.common.PageBean;
 import cn.edu.hitsz.pojo.InventoryAddRequest;
 import cn.edu.hitsz.pojo.InventoryTransferRequest;
-import cn.edu.hitsz.pojo.PageBean;
 
 public interface InventoryService {
 

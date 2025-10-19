@@ -1,10 +1,18 @@
 package cn.edu.hitsz.controller;
 
+import cn.edu.hitsz.common.OrderDetail;
 import cn.edu.hitsz.common.PageBean;
 import cn.edu.hitsz.common.Result;
+import cn.edu.hitsz.pojo.Customer;
 import cn.edu.hitsz.pojo.Order;
+import cn.edu.hitsz.pojo.Product;
+import cn.edu.hitsz.pojo.Warehouse;
+import cn.edu.hitsz.service.CustomerService;
 import cn.edu.hitsz.service.OrderService;
+import cn.edu.hitsz.service.ProductService;
+import cn.edu.hitsz.service.WarehouseService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,6 +26,12 @@ public class OrderController {
 
     @Resource
     private OrderService orderService;
+    @Resource
+    private CustomerService customerService;
+    @Resource
+    private ProductService productService;
+    @Resource
+    private WarehouseService warehouseService;
 
     // ==================== 查询接口 ====================
 
@@ -26,7 +40,7 @@ public class OrderController {
      * GET /api/orders?page=1&pageSize=10&name=鼠标
      */
     @GetMapping
-    public Result<PageBean> listOrders(
+    public Result<PageBean<Order>> listOrders(
             @RequestParam(required = false) String name,
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer pageSize) {
@@ -41,8 +55,7 @@ public class OrderController {
 
             PageBean<Order> pageBean = new PageBean<>();
             pageBean.setTotal(orderPage.getTotal());
-            pageBean.setRows(orderPage.getRecords()); // MyBatis Plus 默认字段是 records
-
+            pageBean.setRows(orderPage.getRecords());     // MyBatis Plus 默认字段是 records
 
             return Result.success(pageBean);
         } catch (Exception e) {
@@ -55,13 +68,33 @@ public class OrderController {
      * GET /api/orders/1
      */
     @GetMapping("/{id}")
-    public Result<Order> getOrderById(@PathVariable Integer id) {
+    public Result<OrderDetail> getOrderById(@PathVariable Integer id) {
         try {
             Order order = orderService.getOrderById(id);
-            if (order == null) {
-                return Result.fail("订单不存在");
+            Customer customer = customerService.getById(order.getCustomerId());
+            Product product = productService.getById(order.getProductId());
+            Warehouse warehouse = warehouseService.getById(order.getWarehouseId());
+
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrderId(order.getId());
+            orderDetail.setCustomerName(customer.getName());
+            orderDetail.setProductName(product.getName());
+            orderDetail.setWarehouseName(warehouse.getName());
+            orderDetail.setQuantity(order.getQuantity());
+            orderDetail.setTotalPrice(order.getTotalPrice());
+            orderDetail.setType(order.getType() == 1 ? "零售订单" : "批发订单");
+
+            String status = null;
+            switch (order.getType()) {
+                case 0: status = "草稿";
+                case 1: status = "已审核";
+                case 2: status = "已收款";
+                case 3: status = "已退货";
+                break;
             }
-            return Result.success(order);
+            orderDetail.setStatus(status);
+
+            return Result.success(orderDetail);
         } catch (Exception e) {
             return Result.fail("查询失败：" + e.getMessage());
         }
