@@ -48,8 +48,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         // 创建 MyBatis-Plus 分页对象
         Page<Order> orderPage = new Page<>(page, pageSize);
 
+        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
+        if(name!=null && !name.equals("")) {
+            queryWrapper.like(Order::getProductName, name);
+        }
+        queryWrapper.orderByDesc(Order::getCreateTime);
+
         // 调用 Mapper 自定义分页查询
-        return baseMapper.selectPageVo(orderPage, name);
+        return baseMapper.selectPage(orderPage, queryWrapper);
     }
 
     @Override
