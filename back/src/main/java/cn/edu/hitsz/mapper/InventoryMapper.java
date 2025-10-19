@@ -37,8 +37,8 @@ public interface InventoryMapper {
      * 新增库存记录
      * @param inventory
      */
-    @Insert("insert into inventory(product_id, warehouse_id, quantity, create_time, update_time) " +
-            " values(#{productId},#{warehouseId},#{quantity},#{createTime},#{updateTime})")
+    @Insert("insert into inventory(product_id, product_name, warehouse_id, warehouse_name, quantity, create_time, update_time) " +
+            " values(#{productId},#{productName},#{warehouseId},#{warehouseName},#{quantity},#{createTime},#{updateTime})")
     void insert(Inventory inventory);
 
     /**

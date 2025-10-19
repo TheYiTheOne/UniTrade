@@ -2,9 +2,9 @@ package cn.edu.hitsz.service.impl;
 
 import cn.edu.hitsz.common.PageBean;
 import cn.edu.hitsz.mapper.InventoryMapper;
-import cn.edu.hitsz.pojo.InventoryAddRequest;
-import cn.edu.hitsz.pojo.InventoryTransferRequest;
-import cn.edu.hitsz.pojo.Inventory;
+import cn.edu.hitsz.mapper.ProductMapper;
+import cn.edu.hitsz.mapper.WarehouseMapper;
+import cn.edu.hitsz.pojo.*;
 import cn.edu.hitsz.service.InventoryService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -20,6 +20,10 @@ public class InventoryServiceImpl implements InventoryService {
     
     @Autowired
     private InventoryMapper inventoryMapper;
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private WarehouseMapper warehouseMapper;
 
     @Override
     public PageBean page(Integer page, Integer pageSize, String name) {
@@ -54,10 +58,14 @@ public class InventoryServiceImpl implements InventoryService {
             Integer newQuantity = existingInventory.getQuantity() + request.getQuantity();
             inventoryMapper.update(existingInventory.getId(), newQuantity, now);
         } else {
+            Product addedProduct = productMapper.selectById(request.getProductId());
+            Warehouse addedWarehouse = warehouseMapper.getById(request.getWarehouseId());
             // 创建新的库存记录
             Inventory newInventory = new Inventory();
             newInventory.setProductId(request.getProductId());
+            newInventory.setProductName(addedProduct.getName());
             newInventory.setWarehouseId(request.getWarehouseId());
+            newInventory.setWarehouseName(addedWarehouse.getName());
             newInventory.setQuantity(request.getQuantity());
             newInventory.setCreateTime(now);
             newInventory.setUpdateTime(now);
@@ -104,10 +112,14 @@ public class InventoryServiceImpl implements InventoryService {
             Integer newEndQuantity = endInventory.getQuantity() + request.getQuantity();
             inventoryMapper.update(endInventory.getId(), newEndQuantity, now);
         } else {
+            Product addedProduct = productMapper.selectById(request.getProductId());
+            Warehouse addedWarehouse = warehouseMapper.getById(request.getEndWarehouseId());
             // 创建新的库存记录
             Inventory newInventory = new Inventory();
             newInventory.setProductId(request.getProductId());
+            newInventory.setProductName(addedProduct.getName());
             newInventory.setWarehouseId(request.getEndWarehouseId());
+            newInventory.setWarehouseName(addedWarehouse.getName());
             newInventory.setQuantity(request.getQuantity());
             newInventory.setCreateTime(now);
             newInventory.setUpdateTime(now);
