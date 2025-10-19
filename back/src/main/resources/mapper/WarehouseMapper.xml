@@ -4,16 +4,35 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.hitsz.mapper.WarehouseMapper">
 
-    <resultMap id="BaseResultMap" type="cn.edu.hitsz.pojo.Warehouse">
-            <id property="id" column="id" />
-            <result property="name" column="name" />
-            <result property="phone" column="phone" />
-            <result property="address" column="address" />
-            <result property="createTime" column="create_time" />
-            <result property="updateTime" column="update_time" />
-    </resultMap>
+    <!--条件查询-->
+    <select id="list" resultType="cn.edu.hitsz.pojo.Warehouse">
+        select *
+        from warehouses
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%', #{name}, '%')
+            </if>
+        </where>
+        order by update_time desc
+    </select>
 
-    <sql id="Base_Column_List">
-        id,name,phone,address,create_time,update_time
-    </sql>
+    <!--更新员工-->
+    <update id="update">
+        update warehouses
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 </mapper>
