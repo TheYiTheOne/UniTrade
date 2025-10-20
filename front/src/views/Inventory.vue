@@ -5,11 +5,19 @@
         <div class="card-header">
           <span>库存管理</span>
           <div>
-            <el-button type="success" @click="handleAddStock">
+            <el-button 
+              v-if="userStore.hasPermission('INVENTORY_IN')" 
+              type="success" 
+              @click="handleAddStock"
+            >
               <el-icon><Plus /></el-icon>
               进货入库
             </el-button>
-            <el-button type="warning" @click="handleTransfer">
+            <el-button 
+              v-if="userStore.hasPermission('TRANSFER_STOCK')" 
+              type="warning" 
+              @click="handleTransfer"
+            >
               <el-icon><Switch /></el-icon>
               库存转移
             </el-button>
@@ -252,7 +260,10 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { getInventory, addInventory, transferInventory } from '@/api/inventory'
 import { getProducts, getProductById } from '@/api/products'
 import { getWarehouses, getWarehouseById } from '@/api/warehouses'
+import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
+
+const userStore = useUserStore()
 
 const loading = ref(false)
 const addStockLoading = ref(false)

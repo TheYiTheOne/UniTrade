@@ -4,7 +4,11 @@
       <template #header>
         <div class="card-header">
           <span>货品管理</span>
-          <el-button type="primary" @click="handleAdd">
+          <el-button 
+            v-if="userStore.hasPermission('VIEW_DATA')" 
+            type="primary" 
+            @click="handleAdd"
+          >
             <el-icon><Plus /></el-icon>
             添加货品
           </el-button>
@@ -65,10 +69,20 @@
         </el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="scope">
-            <el-button type="primary" size="small" @click="handleEdit(scope.row)">
+            <el-button 
+              v-if="userStore.hasPermission('VIEW_DATA')" 
+              type="primary" 
+              size="small" 
+              @click="handleEdit(scope.row)"
+            >
               编辑
             </el-button>
-            <el-button type="danger" size="small" @click="handleDelete(scope.row)">
+            <el-button 
+              v-if="userStore.hasPermission('VIEW_DATA')" 
+              type="danger" 
+              size="small" 
+              @click="handleDelete(scope.row)"
+            >
               删除
             </el-button>
           </template>
@@ -148,7 +162,10 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getProducts, addProduct, updateProduct, deleteProduct } from '@/api/products'
+import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
+
+const userStore = useUserStore()
 
 const loading = ref(false)
 const submitLoading = ref(false)

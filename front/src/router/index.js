@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { ElMessage } from 'element-plus'
 
 const routes = [
   {
@@ -10,6 +11,12 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('@/views/Register.vue'),
     meta: { requiresAuth: false }
   },
   {
@@ -57,6 +64,12 @@ const routes = [
         name: 'Inventory',
         component: () => import('@/views/Inventory.vue'),
         meta: { title: '库存管理' }
+      },
+      {
+        path: 'users',
+        name: 'Users',
+        component: () => import('@/views/Users.vue'),
+        meta: { title: '用户管理', permission: 'VIEW_USERS' }
       }
     ]
   }
@@ -84,10 +97,16 @@ router.beforeEach((to, from, next) => {
   // 检查需要认证的路由
   if (to.meta.requiresAuth !== false && !userStore.isLoggedIn) {
     next('/login')
-  } else if (to.path === '/login' && userStore.isLoggedIn) {
+  } else if ((to.path === '/login' || to.path === '/register') && userStore.isLoggedIn) {
     next('/main')
   } else {
-    next()
+    // 检查页面权限
+    if (to.meta.permission && !userStore.hasPermission(to.meta.permission)) {
+      ElMessage.error('权限不足，无法访问该页面')
+      next('/main/dashboard')
+    } else {
+      next()
+    }
   }
 })
 

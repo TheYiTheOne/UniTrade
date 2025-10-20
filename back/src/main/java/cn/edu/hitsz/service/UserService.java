@@ -1,5 +1,6 @@
 package cn.edu.hitsz.service;
 
+import cn.edu.hitsz.common.RegisterDTO;
 import cn.edu.hitsz.pojo.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -16,5 +17,19 @@ public interface UserService extends IService<User> {
      * @return roleId
      */
     Integer login(String account, String password);
+
+    /**
+     * 用户注册
+     * @param registerDTO 注册信息
+     * @return 是否成功
+     */
+    boolean register(RegisterDTO registerDTO);
+
+    /**
+     * 根据账号查询用户
+     * @param account 账号
+     * @return 用户信息
+     */
+    User getUserByAccount(String account);
 
 }

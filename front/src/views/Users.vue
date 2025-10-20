@@ -1,26 +1,34 @@
 <template>
-  <div class="customers-page">
+  <div class="users-page">
     <el-card>
       <template #header>
         <div class="card-header">
-          <span>客户管理</span>
+          <span>用户管理</span>
           <el-button 
-            v-if="userStore.hasPermission('VIEW_DATA')" 
+            v-if="userStore.hasPermission('EDIT_USERS')" 
             type="primary" 
             @click="handleAdd"
           >
             <el-icon><Plus /></el-icon>
-            添加客户
+            添加用户
           </el-button>
         </div>
       </template>
 
       <!-- 搜索表单 -->
       <el-form :model="searchForm" inline class="search-form">
-        <el-form-item label="客户姓名">
+        <el-form-item label="用户名">
           <el-input
             v-model="searchForm.name"
-            placeholder="请输入客户姓名"
+            placeholder="请输入用户名"
+            clearable
+            @keyup.enter="handleSearch"
+          />
+        </el-form-item>
+        <el-form-item label="账号">
+          <el-input
+            v-model="searchForm.account"
+            placeholder="请输入账号"
             clearable
             @keyup.enter="handleSearch"
           />
@@ -46,25 +54,23 @@
       >
         <el-table-column type="selection" width="55" />
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="客户姓名" />
-        <el-table-column prop="type" label="客户类型" width="120">
-          <template #default="scope">
-            <el-tag :type="scope.row.type === 0 ? 'primary' : 'success'">
-              {{ scope.row.type === 0 ? '批发' : '零售' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="phone" label="联系电话" width="150" />
-        <el-table-column prop="address" label="地址" />
+        <el-table-column prop="account" label="账号" />
+        <el-table-column prop="name" label="姓名" />
+        <el-table-column prop="roleId" label="角色ID" width="100" />
         <el-table-column prop="createTime" label="创建时间" width="180">
           <template #default="scope">
             {{ formatDate(scope.row.createTime) }}
           </template>
         </el-table-column>
+        <el-table-column prop="updateTime" label="更新时间" width="180">
+          <template #default="scope">
+            {{ formatDate(scope.row.updateTime) }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="scope">
             <el-button 
-              v-if="userStore.hasPermission('VIEW_DATA')" 
+              v-if="userStore.hasPermission('EDIT_USERS')" 
               type="primary" 
               size="small" 
               @click="handleEdit(scope.row)"
@@ -72,7 +78,7 @@
               编辑
             </el-button>
             <el-button 
-              v-if="userStore.hasPermission('VIEW_DATA')" 
+              v-if="userStore.hasPermission('EDIT_USERS')" 
               type="danger" 
               size="small" 
               @click="handleDelete(scope.row)"
@@ -110,25 +116,33 @@
         :rules="formRules"
         label-width="100px"
       >
-        <el-form-item label="客户姓名" prop="name">
-          <el-input v-model="form.name" placeholder="请输入客户姓名" />
+        <el-form-item label="账号" prop="account">
+          <el-input v-model="form.account" placeholder="请输入账号" />
         </el-form-item>
-        <el-form-item label="客户类型" prop="type">
-          <el-radio-group v-model="form.type">
-            <el-radio :label="0">批发</el-radio>
-            <el-radio :label="1">零售</el-radio>
-          </el-radio-group>
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="form.name" placeholder="请输入姓名" />
         </el-form-item>
-        <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入联系电话" />
-        </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input
-            v-model="form.address"
-            type="textarea"
-            :rows="3"
-            placeholder="请输入地址"
+        <el-form-item label="密码" prop="password">
+          <el-input 
+            v-model="form.password" 
+            type="password" 
+            placeholder="请输入密码" 
+            show-password
           />
+        </el-form-item>
+        <el-form-item label="角色ID" prop="roleId">
+          <el-select
+            v-model="form.roleId"
+            placeholder="请选择角色"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="role in roles"
+              :key="role.id"
+              :label="role.roleName"
+              :value="role.id"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       
@@ -145,7 +159,8 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getCustomers, addCustomer, updateCustomer, deleteCustomer } from '@/api/customers'
+import { getUsers, addUser, updateUser, deleteUser } from '@/api/users'
+import { getRoles } from '@/api/roles'
 import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
 
@@ -158,9 +173,11 @@ const dialogTitle = ref('')
 const formRef = ref()
 const tableData = ref([])
 const selectedRows = ref([])
+const roles = ref([])
 
 const searchForm = reactive({
-  name: ''
+  name: '',
+  account: ''
 })
 
 const pagination = reactive({
@@ -171,30 +188,38 @@ const pagination = reactive({
 
 const form = reactive({
   id: null,
+  account: '',
   name: '',
-  type: 0,
-  phone: '',
-  address: ''
+  password: '',
+  roleId: null
 })
 
 const formRules = {
+  account: [
+    { required: true, message: '请输入账号', trigger: 'blur' },
+    { min: 3, max: 20, message: '账号长度在3到20个字符', trigger: 'blur' }
+  ],
   name: [
-    { required: true, message: '请输入客户姓名', trigger: 'blur' }
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+    { min: 2, max: 10, message: '姓名长度在2到10个字符', trigger: 'blur' }
   ],
-  type: [
-    { required: true, message: '请选择客户类型', trigger: 'change' }
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
   ],
-  phone: [
-    { required: true, message: '请输入联系电话', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
-  ],
-  address: [
-    { required: true, message: '请输入地址', trigger: 'blur' }
+  roleId: [
+    { required: true, message: '请选择角色', trigger: 'change' }
   ]
 }
 
 // 加载数据
 const loadData = async () => {
+  // 权限检查
+  if (!userStore.hasPermission('VIEW_USERS')) {
+    ElMessage.error('权限不足，无法查看用户信息')
+    return
+  }
+  
   loading.value = true
   try {
     const params = {
@@ -202,13 +227,25 @@ const loadData = async () => {
       pageSize: pagination.pageSize,
       ...searchForm
     }
-    const response = await getCustomers(params)
+    const response = await getUsers(params)
     tableData.value = response.data.rows
     pagination.total = response.data.total
   } catch (error) {
     ElMessage.error('加载数据失败')
   } finally {
     loading.value = false
+  }
+}
+
+// 加载角色列表
+const loadRoles = async () => {
+  try {
+    const response = await getRoles()
+    if (response.code === 200) {
+      roles.value = response.data
+    }
+  } catch (error) {
+    ElMessage.error('加载角色列表失败')
   }
 }
 
@@ -221,6 +258,7 @@ const handleSearch = () => {
 // 重置
 const handleReset = () => {
   searchForm.name = ''
+  searchForm.account = ''
   pagination.page = 1
   loadData()
 }
@@ -244,34 +282,34 @@ const handleSelectionChange = (selection) => {
 
 // 添加
 const handleAdd = () => {
-  dialogTitle.value = '添加客户'
+  dialogTitle.value = '添加用户'
   dialogVisible.value = true
   resetForm()
 }
 
 // 编辑
 const handleEdit = (row) => {
-  dialogTitle.value = '编辑客户'
+  dialogTitle.value = '编辑用户'
   dialogVisible.value = true
   Object.assign(form, {
     id: row.id,
+    account: row.account,
     name: row.name,
-    type: row.type,
-    phone: row.phone,
-    address: row.address
+    password: '******', // 编辑时不显示真实密码
+    roleId: row.roleId
   })
 }
 
 // 删除
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm('确定要删除这个客户吗？', '提示', {
+    await ElMessageBox.confirm('确定要删除这个用户吗？', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     })
     
-    await deleteCustomer(row.id)
+    await deleteUser(row.id)
     ElMessage.success('删除成功')
     loadData()
   } catch (error) {
@@ -289,11 +327,13 @@ const handleSubmit = async () => {
     if (valid) {
       submitLoading.value = true
       try {
+        const formData = { ...form }
+        
         if (form.id) {
-          await updateCustomer(form)
+          await updateUser(formData)
           ElMessage.success('更新成功')
         } else {
-          await addCustomer(form)
+          await addUser(formData)
           ElMessage.success('添加成功')
         }
         
@@ -317,10 +357,10 @@ const handleDialogClose = () => {
 const resetForm = () => {
   Object.assign(form, {
     id: null,
+    account: '',
     name: '',
-    type: 0,
-    phone: '',
-    address: ''
+    password: '',
+    roleId: null
   })
   formRef.value?.clearValidate()
 }
@@ -332,11 +372,12 @@ const formatDate = (date) => {
 
 onMounted(() => {
   loadData()
+  loadRoles()
 })
 </script>
 
 <style scoped>
-.customers-page {
+.users-page {
   padding: 0;
 }
 

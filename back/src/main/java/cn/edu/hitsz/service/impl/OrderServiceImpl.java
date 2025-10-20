@@ -1,6 +1,8 @@
 package cn.edu.hitsz.service.impl;
 
+import cn.edu.hitsz.mapper.CustomerMapper;
 import cn.edu.hitsz.mapper.ProductMapper;
+import cn.edu.hitsz.mapper.WarehouseMapper;
 import cn.edu.hitsz.pojo.Order;
 
 import cn.edu.hitsz.pojo.Product;
@@ -11,6 +13,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.edu.hitsz.service.OrderService;
 import cn.edu.hitsz.mapper.OrderMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
 
     @Resource
     private ProductMapper productMapper;
+    @Resource
+    private CustomerMapper customerMapper;
+    @Resource
+    private WarehouseMapper warehouseMapper;
 
     // 状态常量
     private static final int STATUS_DRAFT = 0;        // 草稿
@@ -73,6 +80,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         BigDecimal unitPrice = product.getRetailPrice();
         order.setTotalPrice(unitPrice.multiply(BigDecimal.valueOf(order.getQuantity())));
 
+        // 设置客户名、货品名和仓库名
+        order.setCustomerName(customerMapper.selectById(order.getCustomerId()).getName());
+        order.setProductName(productMapper.selectById(order.getProductId()).getName());
+        order.setWarehouseName(warehouseMapper.getById(order.getWarehouseId()).getName());
+
         // 设置状态和时间
         order.setStatus(STATUS_DRAFT);
         Date now = new Date();
@@ -100,11 +112,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
 
         // 更新字段
         existing.setCustomerId(order.getCustomerId());
-        existing.setCustomerName(order.getCustomerName());
+        existing.setCustomerName(customerMapper.selectById(order.getCustomerId()).getName());
         existing.setProductId(order.getProductId());
-        existing.setProductName(order.getProductName());
+        existing.setProductName(productMapper.selectById(order.getProductId()).getName());
         existing.setWarehouseId(order.getWarehouseId());
-        existing.setWarehouseName(order.getWarehouseName());
+        existing.setWarehouseName(warehouseMapper.getById(order.getWarehouseId()).getName());
         existing.setQuantity(order.getQuantity());
         existing.setType(order.getType());
 

@@ -43,6 +43,14 @@
           <el-icon><Grid /></el-icon>
           <template #title>库存管理</template>
         </el-menu-item>
+        
+        <el-menu-item 
+          v-if="userStore.hasPermission('VIEW_USERS')" 
+          index="/main/users"
+        >
+          <el-icon><UserFilled /></el-icon>
+          <template #title>用户管理</template>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -68,7 +76,7 @@
           <el-dropdown @command="handleCommand">
             <span class="user-info">
               <el-icon><Avatar /></el-icon>
-              <span>管理员</span>
+              <span>{{ userStore.userInfo?.name || '用户' }}</span>
               <el-icon><ArrowDown /></el-icon>
             </span>
             <template #dropdown>
@@ -89,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
@@ -112,6 +120,11 @@ const handleCommand = (command) => {
     router.push('/login')
   }
 }
+
+onMounted(() => {
+  // 初始化用户信息
+  userStore.initUser()
+})
 </script>
 
 <style scoped>

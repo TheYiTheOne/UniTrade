@@ -4,7 +4,11 @@
       <template #header>
         <div class="card-header">
           <span>销售单管理</span>
-          <el-button type="primary" @click="handleAdd">
+          <el-button 
+            v-if="userStore.hasPermission('OPEN_ORDER')" 
+            type="primary" 
+            @click="handleAdd"
+          >
             <el-icon><Plus /></el-icon>
             添加销售单
           </el-button>
@@ -99,11 +103,16 @@
         </el-table-column>
         <el-table-column label="操作" width="300" fixed="right">
           <template #default="scope">
-            <el-button type="primary" size="small" @click="handleEdit(scope.row)">
+            <el-button 
+              v-if="userStore.hasPermission('VIEW_DATA')" 
+              type="primary" 
+              size="small" 
+              @click="handleEdit(scope.row)"
+            >
               编辑
             </el-button>
             <el-button 
-              v-if="scope.row.status === 0"
+              v-if="scope.row.status === 0 && userStore.hasPermission('AUDIT')"
               type="warning" 
               size="small" 
               @click="handleSubmit(scope.row)"
@@ -111,7 +120,7 @@
               审核
             </el-button>
             <el-button 
-              v-if="scope.row.status === 1"
+              v-if="scope.row.status === 1 && userStore.hasPermission('RECEIVE_PAYMENT')"
               type="success" 
               size="small" 
               @click="handlePay(scope.row)"
@@ -119,7 +128,7 @@
               收款
             </el-button>
             <el-button 
-              v-if="scope.row.status === 1 || scope.row.status === 2"
+              v-if="(scope.row.status === 1 || scope.row.status === 2) && userStore.hasPermission('RETURN_GOODS')"
               type="danger" 
               size="small" 
               @click="handleCancel(scope.row)"
@@ -127,7 +136,7 @@
               退货
             </el-button>
             <el-button 
-              v-if="scope.row.status === 0"
+              v-if="scope.row.status === 0 && userStore.hasPermission('VIEW_DATA')"
               type="danger" 
               size="small" 
               @click="handleDelete(scope.row)"
@@ -275,7 +284,10 @@ import { getOrders, addOrder, updateOrder, deleteOrder, submitOrder, payOrder, c
 import { getCustomers, getCustomerById } from '@/api/customers'
 import { getProducts, getProductById } from '@/api/products'
 import { getWarehouses, getWarehouseById } from '@/api/warehouses'
+import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
+
+const userStore = useUserStore()
 
 const loading = ref(false)
 const submitLoading = ref(false)

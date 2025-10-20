@@ -7,7 +7,9 @@ public enum Permission {
     RECEIVE_PAYMENT(4, "收款", "RECEIVE_PAYMENT"),
     RETURN_GOODS(5, "退货", "RETURN_GOODS"),
     INVENTORY_IN(6, "进货入库", "INVENTORY_IN"),
-    TRANSFER_STOCK(7, "转移库存", "TRANSFER_STOCK");
+    TRANSFER_STOCK(7, "转移库存", "TRANSFER_STOCK"),
+    VIEW_USERS(8, "查询用户表", "VIEW_USERS"),
+    EDIT_USERS(9, "编辑用户信息", "EDIT_USERS");
 
     private final int id;
     private final String name;
@@ -47,6 +49,14 @@ public enum Permission {
 
     public static String TRANSFER_STOCK() {
         return Permission.TRANSFER_STOCK.getCode();
+    }
+
+    public static String VIEW_USERS() {
+        return Permission.VIEW_USERS.getCode();
+    }
+
+    public static String EDIT_USERS() {
+        return Permission.EDIT_USERS.getCode();
     }
 
 
