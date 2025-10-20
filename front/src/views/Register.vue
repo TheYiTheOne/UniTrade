@@ -96,14 +96,18 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '@/api/auth'
-import { getRoles } from '@/api/roles'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
 const registerFormRef = ref()
 const loading = ref(false)
-const roles = ref([])
+const roles = ref([
+  {
+    id: 4,
+    roleName: '店员'
+  }
+])
 
 const registerForm = reactive({
   account: '',
@@ -144,18 +148,6 @@ const registerRules = {
   ]
 }
 
-// 加载角色列表
-const loadRoles = async () => {
-  try {
-    const response = await getRoles()
-    if (response.code === 200) {
-      roles.value = response.data
-    }
-  } catch (error) {
-    ElMessage.error('加载角色列表失败')
-  }
-}
-
 const handleRegister = async () => {
   if (!registerFormRef.value) return
   
@@ -184,9 +176,6 @@ const goToLogin = () => {
   router.push('/login')
 }
 
-onMounted(() => {
-  loadRoles()
-})
 </script>
 
 <style scoped>
