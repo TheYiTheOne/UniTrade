@@ -18,13 +18,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 
-
-
-/**
-* @author Administrator
-* @description 针对表【orders(销售单表，记录销售订单详情)】的数据库操作Service实现
-* @createDate 2025-10-17 22:59:11
-*/
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     implements OrderService {
@@ -48,20 +41,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         // 创建 MyBatis-Plus 分页对象
         Page<Order> orderPage = new Page<>(page, pageSize);
 
-        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
-        if(name!=null && !name.equals("")) {
-            queryWrapper.like(Order::getProductName, name);
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        if (name != null && !name.trim().isEmpty()) {
+            wrapper.like(Order::getProductName, name.trim());
         }
-        queryWrapper.orderByDesc(Order::getCreateTime);
+        wrapper.orderByDesc(Order::getId);      // 按ID降序
 
         // 调用 Mapper 自定义分页查询
-        return baseMapper.selectPage(orderPage, queryWrapper);
+        return baseMapper.selectPage(orderPage, wrapper);
     }
 
     @Override
     public Order getOrderById(Integer id) {
         if (id == null || id <= 0) {
-            throw new IllegalArgumentException("订单ID必须大于0");
+            return null;
         }
         return baseMapper.selectById(id);
     }
@@ -107,8 +100,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
 
         // 更新字段
         existing.setCustomerId(order.getCustomerId());
+        existing.setCustomerName(order.getCustomerName());
         existing.setProductId(order.getProductId());
+        existing.setProductName(order.getProductName());
         existing.setWarehouseId(order.getWarehouseId());
+        existing.setWarehouseName(order.getWarehouseName());
         existing.setQuantity(order.getQuantity());
         existing.setType(order.getType());
 

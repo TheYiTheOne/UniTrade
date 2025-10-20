@@ -13,15 +13,6 @@ import org.apache.ibatis.annotations.Param;
 * @Entity cn.edu.hitsz.pojo.Orders
 */
 public interface OrderMapper extends BaseMapper<Order> {
-
-    /**
-     * 分页查询销售单列表（支持货品名模糊查询）
-     * @param page MyBatis-Plus所提供的分页对象，必须位于第一个参数的位置
-     * @param name
-     * @return
-     */
-    IPage<Order> selectPageVo(@Param("page") Page<Order> page, @Param("name") String name);
-
 }
 
 
